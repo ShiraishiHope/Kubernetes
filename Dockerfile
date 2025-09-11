@@ -1,4 +1,4 @@
-app# Use the official Python 3.13 image as base
+# Use the official Python 3.13 image as base
 FROM python:3.13-slim
 
 # Set environment variables

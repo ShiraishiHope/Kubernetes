@@ -2,22 +2,114 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>To do list</title>
+    <title>To-Do List</title>
     <style>
-        body { font-family: Arial, sans-serif; margin: 40px; background: #f8f8f8; }
-        .container { max-width: 500px; margin: auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
-        .completed { text-decoration: line-through; color: gray; }
-        form input { width: 70%; padding: 8px; }
-        form button { padding: 8px 12px; }
-        ul { list-style: none; padding: 0; }
-        li { display: flex; justify-content: space-between; align-items: center; padding: 5px 0; }
-        small { color: #777; }
-        a { text-decoration: none; color: red; margin-left: 10px; }
+        /* Style global */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f0f4f8;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 500px;
+            margin: 50px auto;
+            background: #ffffff;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        /* Formulaire */
+        form {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        input[type="text"] {
+            width: 75%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+
+        button {
+            width: 20%;
+            background: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        button:hover {
+            background: #45a049;
+        }
+
+        /* Liste des tâches */
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        li {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            background: #f7f9fc;
+            transition: background 0.2s;
+        }
+
+        li:hover {
+            background: #e2e8f0;
+        }
+
+        .completed {
+            text-decoration: line-through;
+            color: #888;
+        }
+
+        .task-actions a {
+            text-decoration: none;
+            margin-left: 10px;
+            font-size: 18px;
+            color: #ff4d4d;
+        }
+
+        .task-actions a.toggle {
+            color: #4CAF50;
+        }
+
+        small {
+            display: block;
+            color: #aaa;
+            margin-top: 4px;
+            font-size: 12px;
+        }
+
+        .empty-message {
+            text-align: center;
+            color: #666;
+            font-style: italic;
+        }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>📝 Ma To-Do List</h1>
+        <h1>📝To-Do List</h1>
 
         <form method="POST">
             {% csrf_token %}
@@ -28,17 +120,19 @@
         <ul>
             {% for task in tasks %}
             <li>
-                <span class="{% if task.is_completed %}completed{% endif %}">
-                    {{ task.title }} <br>
+                <div>
+                    <span class="{% if task.is_completed %}completed{% endif %}">{{ task.title }}</span>
                     <small>{{ task.created_at|date:"d/m/Y H:i" }}</small>
-                </span>
-                <span>
-                    <a href="{% url 'toggle_task' task.id %}">{% if task.is_completed %}🔄{% else %}✅{% endif %}</a>
+                </div>
+                <div class="task-actions">
+                    <a href="{% url 'toggle_task' task.id %}" class="toggle">
+                        {% if task.is_completed %}🔄{% else %}✅{% endif %}
+                    </a>
                     <a href="{% url 'delete_task' task.id %}">🗑</a>
-                </span>
+                </div>
             </li>
             {% empty %}
-            <li><em>Aucune tâche pour l’instant.</em></li>
+            <li class="empty-message">Aucune tâche pour l’instant.</li>
             {% endfor %}
         </ul>
     </div>
