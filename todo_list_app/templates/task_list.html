@@ -2,139 +2,110 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>To-Do List</title>
+    <title>To-Do List Avancée avec Filtres</title>
     <style>
-        /* Style global */
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: #f0f4f8;
-            margin: 0;
-            padding: 0;
-        }
-
-        .container {
-            max-width: 500px;
-            margin: 50px auto;
-            background: #ffffff;
-            padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
-        }
-
-        h1 {
-            text-align: center;
-            color: #333;
-            margin-bottom: 20px;
-        }
-
-        /* Formulaire */
-        form {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 20px;
-        }
-
-        input[type="text"] {
-            width: 75%;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            font-size: 16px;
-        }
-
-        button {
-            width: 20%;
-            background: #4CAF50;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 16px;
-        }
-
-        button:hover {
-            background: #45a049;
-        }
-
-        /* Liste des tâches */
-        ul {
-            list-style: none;
-            padding: 0;
-        }
-
-        li {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 12px;
-            margin-bottom: 10px;
-            border-radius: 8px;
-            background: #f7f9fc;
-            transition: background 0.2s;
-        }
-
-        li:hover {
-            background: #e2e8f0;
-        }
-
-        .completed {
-            text-decoration: line-through;
-            color: #888;
-        }
-
-        .task-actions a {
-            text-decoration: none;
-            margin-left: 10px;
-            font-size: 18px;
-            color: #ff4d4d;
-        }
-
-        .task-actions a.toggle {
-            color: #4CAF50;
-        }
-
-        small {
-            display: block;
-            color: #aaa;
-            margin-top: 4px;
-            font-size: 12px;
-        }
-
-        .empty-message {
-            text-align: center;
-            color: #666;
-            font-style: italic;
-        }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f4f7fa; margin:0; padding:0; }
+        .container { max-width: 700px; margin: 50px auto; background: #fff; padding: 30px 40px; border-radius:16px; box-shadow:0 10px 25px rgba(0,0,0,0.1);}
+        h1 { text-align:center; color:#333; margin-bottom:30px; font-size:2em; }
+        form { display:flex; gap:10px; margin-bottom:20px; flex-wrap:wrap;}
+        input[type="text"]{flex:2;padding:12px;border-radius:10px;border:1px solid #ddd;font-size:16px;}
+        select{flex:1;padding:12px;border-radius:10px;border:1px solid #ddd;font-size:16px;}
+        button{flex:0.5;background:#007bff;color:white;border:none;border-radius:10px;font-size:16px;cursor:pointer;transition:0.3s;}
+        button:hover{background:#0056b3;}
+        .filters { margin-bottom:20px; display:flex; gap:10px; flex-wrap:wrap; }
+        .filters button { flex:1; padding:10px; border:none; border-radius:10px; cursor:pointer; background:#eee; transition:0.3s; }
+        .filters button.active, .filters button:hover { background:#007bff; color:white; }
+        ul { list-style:none; padding:0; margin:0; }
+        li.task-card { display:flex; justify-content:space-between; align-items:center; padding:15px 20px; margin-bottom:12px; border-radius:12px; background:#f7f9fc; box-shadow:0 3px 6px rgba(0,0,0,0.05); transition: transform 0.2s, background 0.2s; }
+        li.task-card:hover{transform:translateY(-2px); background:#eef3f9;}
+        .task-info { display:flex; flex-direction:column; }
+        .task-title{font-size:1.1em;font-weight:600;}
+        .task-title.completed{ text-decoration:line-through; color:#888; }
+        .task-meta{ font-size:12px;color:#666; }
+        .task-actions a{ text-decoration:none;margin-left:12px;font-size:20px; }
+        .task-actions a.toggle{ color:#28a745; }
+        .task-actions a.delete{ color:#dc3545; }
+        .priority-high{ border-left:6px solid #dc3545; }
+        .priority-medium{ border-left:6px solid #ffc107; }
+        .priority-low{ border-left:6px solid #28a745; }
+        .empty-message{ text-align:center;color:#999;font-style:italic; }
+        @media(max-width:600px){ form, .filters{ flex-direction:column; } button{ width:100%; }}
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>📝To-Do List</h1>
+<div class="container">
+    <h1>📝 To-Do List avec Filtres</h1>
 
-        <form method="POST">
-            {% csrf_token %}
-            <input type="text" name="title" placeholder="Nouvelle tâche..." required>
-            <button type="submit">Ajouter</button>
-        </form>
+    <!-- Formulaire d'ajout -->
+    <form method="POST">
+        {% csrf_token %}
+        <input type="text" name="title" placeholder="Nouvelle tâche..." required>
+        <select name="priority">
+            <option value="high">Élevée</option>
+            <option value="medium" selected>Moyenne</option>
+            <option value="low">Faible</option>
+        </select>
+        <button type="submit">Ajouter</button>
+    </form>
 
-        <ul>
-            {% for task in tasks %}
-            <li>
-                <div>
-                    <span class="{% if task.is_completed %}completed{% endif %}">{{ task.title }}</span>
-                    <small>{{ task.created_at|date:"d/m/Y H:i" }}</small>
-                </div>
-                <div class="task-actions">
-                    <a href="{% url 'toggle_task' task.id %}" class="toggle">
-                        {% if task.is_completed %}🔄{% else %}✅{% endif %}
-                    </a>
-                    <a href="{% url 'delete_task' task.id %}">🗑</a>
-                </div>
-            </li>
-            {% empty %}
-            <li class="empty-message">Aucune tâche pour l’instant.</li>
-            {% endfor %}
-        </ul>
+    <!-- Filtres -->
+    <div class="filters">
+        <button class="filter-btn active" data-filter="all">Toutes</button>
+        <button class="filter-btn" data-filter="todo">À faire</button>
+        <button class="filter-btn" data-filter="done">Terminées</button>
+        <button class="filter-btn" data-filter="high">Priorité élevée</button>
+        <button class="filter-btn" data-filter="medium">Priorité moyenne</button>
+        <button class="filter-btn" data-filter="low">Priorité faible</button>
     </div>
+
+    <!-- Liste des tâches -->
+    <ul id="task-list">
+        {% for task in tasks %}
+        <li class="task-card priority-{{ task.priority }} {% if task.is_completed %}done{% else %}todo{% endif %}">
+            <div class="task-info">
+                <span class="task-title {% if task.is_completed %}completed{% endif %}">{{ task.title }} ({{ task.get_priority_display }})</span>
+                <span class="task-meta">Créée : {{ task.created_at|date:"d/m/Y H:i" }}</span>
+            </div>
+            <div class="task-actions">
+                {% if not task.is_completed %}
+                <a href="{% url 'toggle_task' task.id %}" class="toggle">✅</a>
+                {% else %}
+                <a href="{% url 'toggle_task' task.id %}" class="toggle">🔄</a>
+                {% endif %}
+                <a href="{% url 'delete_task' task.id %}" class="delete">🗑</a>
+            </div>
+        </li>
+        {% empty %}
+        <li class="empty-message">Aucune tâche pour l'instant.</li>
+        {% endfor %}
+    </ul>
+</div>
+
+<script>
+    const filterBtns = document.querySelectorAll('.filter-btn');
+    const tasks = document.querySelectorAll('#task-list li.task-card');
+
+    filterBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            filterBtns.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            const filter = btn.dataset.filter;
+
+            tasks.forEach(task => {
+                if(filter === 'all'){
+                    task.style.display = 'flex';
+                } else if(filter === 'todo' && task.classList.contains('todo')){
+                    task.style.display = 'flex';
+                } else if(filter === 'done' && task.classList.contains('done')){
+                    task.style.display = 'flex';
+                } else if(['high','medium','low'].includes(filter) && task.classList.contains('priority-'+filter)){
+                    task.style.display = 'flex';
+                } else {
+                    task.style.display = 'none';
+                }
+            });
+        });
+    });
+</script>
 </body>
 </html>
