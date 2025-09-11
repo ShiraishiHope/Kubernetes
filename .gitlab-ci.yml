@@ -1,0 +1,36 @@
+stages:
+  - build
+  - test
+  - deploy
+
+variables:
+  IMAGE_TAG: $DOCKER_USERNAME/todo-app:latest
+
+build:
+  stage: build
+  image: docker:20.10.16
+  services:
+    - docker:20.10.16-dind
+  script:
+    - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+    - docker build -t $IMAGE_TAG .
+    - docker push $IMAGE_TAG
+    - rm -f /root/.docker/config.json
+  only:
+    - main
+
+test:
+  stage: test
+  image: python:3.13-slim
+  script:
+    - pip install -r requirements.txt
+    - python manage.py test
+  only:
+    - main
+
+deploy:
+  stage: deploy
+  script:
+    - echo "Deployment successful"
+  only:
+    - main
