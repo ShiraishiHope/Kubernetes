@@ -1,6 +1,6 @@
 # Kubernetes To-Do List Project
 
-Ce projet est une application To-Do List basée sur Django et SQLite, conteneurisée avec Docker.
+Ce projet est une application To-Do List basée sur Django et SQLite, conteneurisée avec Docker. 
 
 ## Objectif
 
