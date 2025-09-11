@@ -2,6 +2,10 @@ from django.db import models
 
 # Create your models here.
 
-class List_Item(models.Model):
-    label = models.CharField((""), max_length=50),
-    actif = models.BooleanField
+class Task(models.Model):
+    title = models.CharField(max_length=255)
+    is_completed = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.title

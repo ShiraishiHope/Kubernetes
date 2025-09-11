@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>To do list</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 40px; background: #f8f8f8; }
+        .container { max-width: 500px; margin: auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+        .completed { text-decoration: line-through; color: gray; }
+        form input { width: 70%; padding: 8px; }
+        form button { padding: 8px 12px; }
+        ul { list-style: none; padding: 0; }
+        li { display: flex; justify-content: space-between; align-items: center; padding: 5px 0; }
+        small { color: #777; }
+        a { text-decoration: none; color: red; margin-left: 10px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📝 Ma To-Do List</h1>
+
+        <form method="POST">
+            {% csrf_token %}
+            <input type="text" name="title" placeholder="Nouvelle tâche..." required>
+            <button type="submit">Ajouter</button>
+        </form>
+
+        <ul>
+            {% for task in tasks %}
+            <li>
+                <span class="{% if task.is_completed %}completed{% endif %}">
+                    {{ task.title }} <br>
+                    <small>{{ task.created_at|date:"d/m/Y H:i" }}</small>
+                </span>
+                <span>
+                    <a href="{% url 'toggle_task' task.id %}">{% if task.is_completed %}🔄{% else %}✅{% endif %}</a>
+                    <a href="{% url 'delete_task' task.id %}">🗑</a>
+                </span>
+            </li>
+            {% empty %}
+            <li><em>Aucune tâche pour l’instant.</em></li>
+            {% endfor %}
+        </ul>
+    </div>
+</body>
+</html>

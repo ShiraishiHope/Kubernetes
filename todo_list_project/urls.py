@@ -19,5 +19,5 @@ from django.urls import path , include
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include('todo_list_app.urls')), # la page d'accueil de l'app
+    path('', include('todo_list_app.urls')),  # ou 'todo_list_app.urls'
 ]
