@@ -16,7 +16,7 @@ def task_list(request):
             Task.objects.create(title=title, priority=priority)
         return redirect('task_list')
 
-    return render(request, 'task_list.html', {'tasks': tasks})
+    return render(request, 'task_list.html', {'tasks': tasks.order_by('priority','created_at')})
     
 
 def toggle_task(request, task_id):
