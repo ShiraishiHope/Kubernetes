@@ -5,12 +5,19 @@ stages:
 
 variables:
   IMAGE_TAG: $DOCKER_USERNAME/todo-app:latest
+  POSTGRES_DB: todo_test_db
+  POSTGRES_USER: todo_user
+  POSTGRES_PASSWORD: secretpassword
+  DB_HOST: postgres
+  DB_PORT: 5432
 
 build:
   stage: build
   image: docker:20.10.16
   services:
     - docker:20.10.16-dind
+    - name: postgres:15
+      alias: postgres
   script:
     - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
     - docker build -t $IMAGE_TAG .
@@ -19,11 +26,14 @@ build:
   only:
     - main
 
+before_script:
+  - until pg_isready -h $DB_HOST -p $DB_PORT; do echo "Waiting for Postgres..."; sleep 1; done
+  - python manage.py migrate
+
 test:
   stage: test
   image: python:3.13-slim
   script:
-    - pip install -r requirements.txt
     - python manage.py test
   only:
     - main
