@@ -6,11 +6,11 @@ from .models import Task
 class TaskModelTest(TestCase):
     def test_task_creation(self):
         # Use the correct priority value based on your model choice
-        task = Task.objects.create(title="Test Task", priority="high")  # if using Option A
+        task = Task.objects.create(title="Test Task", priority="1")  # if using Option A
         # OR: task = Task.objects.create(title="Test Task", priority="1")  # if using Option B
         
         self.assertEqual(task.title, "Test Task")
-        self.assertEqual(task.priority, "high")  # Adjust based on your choice
+        self.assertEqual(task.priority, "1")  # Adjust based on your choice
         self.assertFalse(task.is_completed)
 
 class TaskViewTest(TestCase):
@@ -31,4 +31,4 @@ class TaskViewTest(TestCase):
         
         # Verify the priority was saved correctly
         task = Task.objects.get(title='New Task')
-        self.assertEqual(task.priority, 'medium')  # Adjust based on your choice
+        self.assertEqual(task.priority, '2')  # Adjust based on your choice

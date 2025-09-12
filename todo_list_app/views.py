@@ -3,11 +3,11 @@ from .models import Task
 from django.utils import timezone
 
 def task_list(request):
-    #tasks = Task.objects.all().order_by(
-    #    '-priority',      # priorité élevée en premier
-    #    'is_completed',   # non complétées avant complétées
-    #    'created_at'      # puis par date de création
-    #)
+    tasks = Task.objects.all().order_by(
+        '-priority',      # priorité élevée en premier
+        'is_completed',   # non complétées avant complétées
+        'created_at'      # puis par date de création
+    )
 
     if request.method == 'POST':
         title = request.POST.get('title')
