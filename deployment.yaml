@@ -13,11 +13,10 @@ spec:
     spec:
       containers:
       - name: todo-app
-        image: todo-app:latest
-        imagePullPolicy: Never
+        image: rmdocker42/todo-app
         resources:
           limits:
             memory: "128Mi"
             cpu: "500m"
         ports:
-        - containerPort: 8000
+        - containerPort: 8080
