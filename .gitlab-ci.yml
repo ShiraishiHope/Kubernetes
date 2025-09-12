@@ -56,8 +56,6 @@ test:
     - coverage run --source='.' manage.py test
     - coverage report
     - coverage xml
-    # Show coverage percentage in GitLab
-    - coverage report | tail -1 | awk '{print "Coverage: " $4}'
   coverage: '/TOTAL.*\s+(\d+%)$/'
   only:
     - main
