@@ -1,21 +1,6 @@
-from django.test import TestCase, Client , override_settings
+from django.test import TestCase, Client 
 from django.urls import reverse
 from .models import Task
-import os 
-
-# Paramètres pour la DB PostgreSQL
-POSTGRES_TEST_DB = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.environ.get('DB_NAME', 'todo_db'),
-        'USER': os.environ.get('DB_USER', 'todo_user'),
-        'PASSWORD': os.environ.get('DB_PASSWORD', 'secretpassword'),
-        'HOST': os.environ.get('DB_HOST', 'localhost'),
-        'PORT': os.environ.get('DB_PORT', '5432'),
-    }
-}
-
-@override_settings(DATABASES=POSTGRES_TEST_DB)
 
 class TaskModelTest(TestCase):
     def test_task_creation(self):

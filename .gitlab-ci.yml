@@ -40,6 +40,8 @@ test:
     - pip install -r requirements.txt
     # Attendre que PostgreSQL soit prêt
     - until pg_isready -h $DB_HOST -p $DB_PORT; do echo "Waiting for Postgres..."; sleep 1; done
+    # Créer la base si elle n'existe pas
+    - psql -h $DB_HOST -U $POSTGRES_USER -tc "SELECT 1 FROM pg_database WHERE datname = '$POSTGRES_DB'" | grep -q 1 || psql -h $DB_HOST -U $POSTGRES_USER -c "CREATE DATABASE $POSTGRES_DB"
     # Appliquer les migrations
     - python manage.py migrate
   script:
