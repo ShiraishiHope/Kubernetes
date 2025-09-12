@@ -1,0 +1,16 @@
+db.sqlite3
+# Ignore Minikube / Kubernetes local files
+minikube-windows-amd64.exe
+minikube.exe
+kubectl.exe
+.minkube/
+.kube/
+
+# Ignore Docker images or build artifacts
+*.tar
+*.img
+*.iso
+
+# Ignore temporary files
+*.log
+*.tmp
