@@ -91,10 +91,6 @@ DATABASES = {
     }
 }
 
-# Test runner configuration
-if 'test' in sys.argv:
-    DATABASES['default']['OPTIONS'] = {'init_command': "SET foreign_key_checks = 0;"}
-
 
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
