@@ -20,7 +20,8 @@ spec:
             cpu: "500m"
         ports:
         - containerPort: 8000
-
-command: >
-  sh -c "python manage.py migrate &&
-         python manage.py runserver 0.0.0.0:8000"
+        command: ["sh", "-c"]
+        args:
+          - |
+            python manage.py migrate &&
+            python manage.py runserver 0.0.0.0:8000
