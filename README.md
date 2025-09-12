@@ -47,3 +47,4 @@ Créer une application de gestion de tâches avec les fonctionnalités suivantes
     docker compose up
 
 3. Accéder à l'application via http://localhost:8000 
+
