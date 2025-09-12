@@ -29,6 +29,7 @@ build:
 before_script:
   - until pg_isready -h $DB_HOST -p $DB_PORT; do echo "Waiting for Postgres..."; sleep 1; done
   - python manage.py migrate
+  - apt-get update && apt-get install -y postgresql-client
 
 test:
   stage: test
