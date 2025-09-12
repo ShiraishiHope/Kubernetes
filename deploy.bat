@@ -1,20 +1,19 @@
-@echo off
-echo Starting Minikube...
-.\minikube-windows-amd64.exe start --driver=docker
+echo Deploying Postgres...
+kubectl apply -f postgres.yaml
 
-echo.
-echo Deploying application...
-.\kubectl.exe apply -f deployment.yaml
-.\kubectl.exe apply -f service.yaml
+echo Waiting for Postgres pod to be Running...
+kubectl wait --for=condition=ready pod -l app=postgres --timeout=120s
 
-echo.
-echo Waiting for deployment to be ready...
-timeout /t 15 /nobreak >nul
+echo Running migration job...
+kubectl apply -f job-migrate.yaml
+kubectl wait --for=condition=complete job/todo-app-migrate --timeout=120s
 
-echo.
+echo Deploying Django app...
+kubectl apply -f deployment.yaml
+kubectl apply -f service.yaml
+
+echo Waiting for todo-app pod to be Ready...
+kubectl wait --for=condition=ready pod -l app=todo-app --timeout=120s
+
 echo Opening application...
-.\minikube-windows-amd64.exe service todo-app-service
-
-echo.
-echo Deployment complete! Keep this terminal open for the service tunnel.
-pause
+minikube service todo-app-service

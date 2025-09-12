@@ -20,8 +20,14 @@ spec:
             cpu: "500m"
         ports:
         - containerPort: 8000
-        command: ["sh", "-c"]
-        args:
-          - |
-            python manage.py migrate &&
-            python manage.py runserver 0.0.0.0:8000
+        env:
+          - name: DB_NAME
+            value: todo_db
+          - name: DB_USER
+            value: todo_user
+          - name: DB_PASSWORD
+            value: secretpassword
+          - name: DB_HOST
+            value: postgres
+          - name: DB_PORT
+            value: "5432"

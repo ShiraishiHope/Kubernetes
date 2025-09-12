@@ -1,0 +1,24 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: todo-app-migrate
+spec:
+  template:
+    spec:
+      containers:
+        - name: migrate
+          image: rmdocker42/todo-app
+          command: ["sh", "-c", "python manage.py migrate"]
+          env:
+            - name: DB_NAME
+              value: todo_db
+            - name: DB_USER
+              value: todo_user
+            - name: DB_PASSWORD
+              value: secretpassword
+            - name: DB_HOST
+              value: postgres
+            - name: DB_PORT
+              value: "5432"
+      restartPolicy: Never
+  backoffLimit: 3
