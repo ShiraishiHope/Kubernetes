@@ -5,20 +5,18 @@ stages:
 
 variables:
   IMAGE_TAG: $DOCKER_USERNAME/todo-app:latest
-  POSTGRES_DB: todo_test_db
-  POSTGRES_USER: todo_user
-  POSTGRES_PASSWORD: secretpassword
+  # Use consistent variable names that match Django settings
+  DB_NAME: todo_test_db
+  DB_USER: todo_user
+  DB_PASSWORD: secretpassword
   DB_HOST: postgres
-  DB_PORT: 5432
-  DATABASE_URL: "postgresql://$POSTGRES_USER:$POSTGRES_PASSWORD@$DB_HOST:$DB_PORT/$POSTGRES_DB"
+  DB_PORT: "5432"
 
 build:
   stage: build
   image: docker:20.10.16
   services:
     - docker:20.10.16-dind
-    - name: postgres:15
-      alias: postgres
   script:
     - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
     - docker build -t $IMAGE_TAG .
@@ -33,19 +31,34 @@ test:
   services:
     - name: postgres:15
       alias: postgres
+  variables:
+    # Override PostgreSQL service variables
+    POSTGRES_DB: todo_test_db
+    POSTGRES_USER: todo_user  
+    POSTGRES_PASSWORD: secretpassword
+    POSTGRES_HOST_AUTH_METHOD: trust
   before_script:
-    # Installer les dépendances système pour psycopg2
+    # Install system dependencies
     - apt-get update && apt-get install -y libpq-dev gcc postgresql-client
     - pip install --upgrade pip
     - pip install -r requirements.txt
-    # Attendre que PostgreSQL soit prêt
-    - until pg_isready -h $DB_HOST -p $DB_PORT; do echo "Waiting for Postgres..."; sleep 1; done
-    # Créer la base si elle n'existe pas
-    - PGPASSWORD=$POSTGRES_PASSWORD psql -h $DB_HOST -U $POSTGRES_USER -tc "SELECT 1 FROM pg_database WHERE datname = '$POSTGRES_DB'" | grep -q 1 || PGPASSWORD=$POSTGRES_PASSWORD psql -h $DB_HOST -U $POSTGRES_USER -c "CREATE DATABASE $POSTGRES_DB"
-    # Appliquer les migrations
-    - python manage.py migrate
+    
+    # Wait for PostgreSQL to be ready
+    - until pg_isready -h $DB_HOST -p $DB_PORT -U $DB_USER; do echo "Waiting for Postgres..."; sleep 1; done
+    
+    # Create database if it doesn't exist
+    - PGPASSWORD=$DB_PASSWORD psql -h $DB_HOST -U $DB_USER -tc "SELECT 1 FROM pg_database WHERE datname = '$DB_NAME'" | grep -q 1 || PGPASSWORD=$DB_PASSWORD psql -h $DB_HOST -U $DB_USER -c "CREATE DATABASE $DB_NAME"
+    
+    # Run migrations
+    - python manage.py migrate --run-syncdb
   script:
-    - python manage.py test
+    # HERE ARE THE COVERAGE COMMANDS:
+    - coverage run --source='.' manage.py test
+    - coverage report
+    - coverage xml
+    # Show coverage percentage in GitLab
+    - coverage report | tail -1 | awk '{print "Coverage: " $4}'
+  coverage: '/TOTAL.*\s+(\d+%)$/'
   only:
     - main
 
