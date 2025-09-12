@@ -10,6 +10,7 @@ variables:
   POSTGRES_PASSWORD: secretpassword
   DB_HOST: postgres
   DB_PORT: 5432
+  DATABASE_URL: "postgresql://$POSTGRES_USER:$POSTGRES_PASSWORD@$DB_HOST:$DB_PORT/$POSTGRES_DB"
 
 build:
   stage: build
@@ -26,14 +27,21 @@ build:
   only:
     - main
 
-before_script:
-  - until pg_isready -h $DB_HOST -p $DB_PORT; do echo "Waiting for Postgres..."; sleep 1; done
-  - python manage.py migrate
-  - apt-get update && apt-get install -y postgresql-client
-
 test:
   stage: test
-  image: python:3.13-slim
+  image: python:3.13
+  services:
+    - name: postgres:15
+      alias: postgres
+  before_script:
+    # Installer les dépendances système pour psycopg2
+    - apt-get update && apt-get install -y libpq-dev gcc postgresql-client
+    - pip install --upgrade pip
+    - pip install -r requirements.txt
+    # Attendre que PostgreSQL soit prêt
+    - until pg_isready -h $DB_HOST -p $DB_PORT; do echo "Waiting for Postgres..."; sleep 1; done
+    # Appliquer les migrations
+    - python manage.py migrate
   script:
     - python manage.py test
   only:
