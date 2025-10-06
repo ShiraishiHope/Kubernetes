@@ -41,9 +41,9 @@
         {% csrf_token %}
         <input type="text" name="title" placeholder="Nouvelle tâche..." required>
         <select name="priority">
-            <option value="high">Élevée</option>
-            <option value="medium" selected>Moyenne</option>
-            <option value="low">Faible</option>
+            <option value="1">Élevée</option>
+            <option value="2" selected>Moyenne</option>
+            <option value="3">Faible</option>
         </select>
         <button type="submit">Ajouter</button>
     </form>

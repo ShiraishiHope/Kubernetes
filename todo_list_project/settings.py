@@ -9,7 +9,8 @@ https://docs.djangoproject.com/en/5.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.2/ref/settings/
 """
-
+import os
+import sys
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -75,6 +76,7 @@ WSGI_APPLICATION = 'todo_list_project.wsgi.application'
 
 import os
 
+# Database configuration
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
@@ -83,6 +85,9 @@ DATABASES = {
         'PASSWORD': os.environ.get('DB_PASSWORD', 'secretpassword'),
         'HOST': os.environ.get('DB_HOST', 'localhost'),
         'PORT': os.environ.get('DB_PORT', '5432'),
+        'TEST': {
+            'NAME': 'test_' + os.environ.get('DB_NAME', 'todo_db'),
+        }
     }
 }
 

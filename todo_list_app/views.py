@@ -11,7 +11,8 @@ def task_list(request):
 
     if request.method == 'POST':
         title = request.POST.get('title')
-        priority = request.POST.get('priority', 'medium')
+        priority_mapping = {'high': '1', 'medium': '2', 'low': '3'}
+        priority = priority_mapping.get(request.POST.get('priority', 'medium'), '2')
         if title:
             Task.objects.create(title=title, priority=priority)
         return redirect('task_list')
